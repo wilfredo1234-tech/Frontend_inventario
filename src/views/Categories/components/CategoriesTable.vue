@@ -31,51 +31,91 @@
             <span class="products-count">{{ category.products_count || 0 }} productos</span>
           </td>
           <td>
-            <div class="actions">
-              <router-link 
-                :to="`/dashboard/categorias/editar/${category.id}`" 
-                class="edit-btn"
-              >
-                Editar
-              </router-link>
-              <button 
-                @click="deleteCategory(category.id)" 
-                class="delete-btn"
-              >
-                Eliminar
-              </button>
-            </div>
+            <ActionButtons
+              @edit="() => editCategory(category)"
+              @delete="() => prepareDeleteCategory(category)"
+            />
           </td>
         </tr>
       </tbody>
     </table>
+
+    
+    <EditCategoryModal 
+      :show="showEditModal" 
+      :category="categoryToEdit"
+      @update="handleUpdate"
+      @close="showEditModal = false"
+    />
+    
+    <DeleteCategoryModal 
+      :show="showDeleteModal" 
+      :categoryName="categoryToDeleteName"
+      @confirmDelete="handleDelete"
+      @close="showDeleteModal = false"
+    />
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
+import { useCategories } from '@/composables/useCategories';
+import EditCategoryModal from './EditCategoryModal.vue';
+import DeleteCategoryModal from './DeleteCategoryModal.vue';
+import ActionButtons from '@/components/ActionButtons.vue';
 
-const props = defineProps({
-  categories: Array,
-});
+const { categories, loading, error, removeCategory, updateCategory, fetchCategories } = useCategories();
 
-const emit = defineEmits(['refresh']);
 
-const deleteCategory = async (id) => {
-  if (confirm('¿Estás seguro de eliminar esta categoría?')) {
-    try {
-      
-      console.log('Eliminando categoría con ID:', id);
-      
-      emit('refresh');
-    } catch (error) {
-      console.error('Error al eliminar categoría:', error);
-    }
+const showEditModal = ref(false);
+const showDeleteModal = ref(false);
+const categoryToEdit = ref(null);
+const categoryToDeleteName = ref('');
+const categoryToDeleteId = ref(null);
+
+
+const handleUpdate = async (categoryData) => {
+  try {
+    await updateCategory(categoryData.id, categoryData);
+    showEditModal.value = false;
+  } catch (err) {
+    console.error('Error al actualizar categoría:', err);
   }
+};
+
+const handleDelete = async () => {
+  try {
+    await removeCategory(categoryToDeleteId.value);
+    showDeleteModal.value = false;
+  } catch (err) {
+    console.error('Error al eliminar categoría:', err);
+  }
+};
+
+const prepareDeleteCategory = (category) => {
+  categoryToDeleteId.value = category.id;
+  categoryToDeleteName.value = category.name;
+  showDeleteModal.value = true;
+};
+
+const editCategory = (category) => {
+  console.log('Editando categoría:', category);
+  categoryToEdit.value = { ...category };
+  showEditModal.value = true;
 };
 </script>
 
 <style scoped>
+.add-category-btn {
+  margin-bottom: 16px;
+  padding: 8px 16px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .categories-table-wrapper {
   overflow-x: auto;
   background: white;
@@ -149,36 +189,5 @@ const deleteCategory = async (id) => {
   border-radius: 12px;
   font-size: 12px;
   font-weight: 500;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-}
-
-.edit-btn {
-  color: #1976d2;
-  text-decoration: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-}
-
-.edit-btn:hover {
-  background-color: #e3f2fd;
-}
-
-.delete-btn {
-  color: #d32f2f;
-  background: none;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.delete-btn:hover {
-  background-color: #ffebee;
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
   <div class="categories-container">
     <div class="categories-header">
-      <h1 class="categories-title"> Categorías</h1>
-      <router-link to="/dashboard/categorias/nueva" class="new-category-btn">
+      <h1 class="categories-title">Categorías</h1>
+      <button @click="showCreateModal = true" class="new-category-btn">
         + Nueva Categoría
-      </router-link>
+      </button>
     </div>
 
     <div v-if="loading" class="loading-state">
@@ -17,14 +17,34 @@
     <div v-else>
       <CategoriesTable :categories="categories" @refresh="fetchCategories" />
     </div>
+
+    <CreateCategoryModal 
+      v-if="showCreateModal" 
+      :show="showCreateModal" 
+      @create="handleCreate" 
+      @close="showCreateModal = false"
+    />
   </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
 import CategoriesTable from "./components/CategoriesTable.vue";
+import CreateCategoryModal from "./components/CreateCategoryModal.vue";
 import { useCategories } from "@/composables/useCategories";
 
-const { categories, loading, error, fetchCategories } = useCategories();
+const { categories, loading, error, fetchCategories, addCategory } = useCategories();
+
+const showCreateModal = ref(false);
+
+const handleCreate = async (newCategory) => {
+  try {
+    await addCategory(newCategory);
+    showCreateModal.value = false;
+  } catch (error) {
+    alert("Error al crear la categoría.");
+  }
+};
 </script>
 
 <style scoped>
@@ -55,7 +75,8 @@ const { categories, loading, error, fetchCategories } = useCategories();
   color: white;
   padding: 8px 16px;
   border-radius: 4px;
-  text-decoration: none;
+  border: none;
+  cursor: pointer;
   font-weight: 500;
   transition: background-color 0.3s;
 }
