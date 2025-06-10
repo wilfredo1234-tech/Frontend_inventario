@@ -26,36 +26,49 @@
             {{ profile.email_verified_at ? "Verificado" : "No verificado" }}
           </span>
         </p>
-        <router-link to="/dashboard/perfil/editar" class="edit-profile-btn">
+        <button class="edit-profile-btn" @click="showEditModal = true">
           ✏️ Editar Perfil
-        </router-link>
+        </button>
       </div>
     </div>
+
+   
+    <EditProfileModal
+      :visible="showEditModal"
+      :user="profile"
+      :token="token"
+      @close="showEditModal = false"
+      @updated="fetchProfile"
+    />
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useProfile } from "@/composables/useProfile";
+import { ref, computed } from 'vue';
+import EditProfileModal from './components/EditProfileModal.vue';
+import { useProfile } from '@/composables/useProfile';
 
-const { profile, loading, error } = useProfile();
+const { profile, loading, error, fetchProfile } = useProfile();
+
+const token = localStorage.getItem('token');
+const showEditModal = ref(false);
 
 const profileInitials = computed(() => {
-  if (!profile.value?.name) return "";
+  if (!profile.value?.name) return '';
   return profile.value.name
-    .split(" ")
+    .split(' ')
     .map((n) => n[0])
-    .join("")
+    .join('')
     .toUpperCase();
 });
 
 const formattedDate = computed(() => {
-  if (!profile.value?.created_at) return "";
+  if (!profile.value?.created_at) return '';
   const date = new Date(profile.value.created_at);
-  return date.toLocaleDateString("es-ES", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  return date.toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 });
 </script>
@@ -92,7 +105,7 @@ const formattedDate = computed(() => {
 }
 .profile-card {
   background: #fff;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -103,7 +116,7 @@ const formattedDate = computed(() => {
   text-align: center;
 }
 .avatar-circle {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -129,8 +142,11 @@ const formattedDate = computed(() => {
   padding: 10px 20px;
   border-radius: 6px;
   text-decoration: none;
+  cursor: pointer;
 }
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
