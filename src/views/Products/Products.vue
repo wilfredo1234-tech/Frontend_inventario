@@ -7,12 +7,7 @@
       </button>
     </div>
 
-    <div v-if="loading" class="productos-loading">
-      <div class="spinner"></div>
-      <p>Cargando productos...</p>
-    </div>
-
-    <div v-else-if="error" class="alert-error">
+    <div v-if="error" class="alert-error">
       {{ error }}
     </div>
 
@@ -20,12 +15,12 @@
       <ProductTable :products="products" @refresh="fetchProducts" />
     </div>
 
-   
     <CreateProductModal 
       v-if="showCreateModal" 
       :show="showCreateModal" 
       @create="handleCreateProduct"
       @close="showCreateModal = false"
+        
     />
   </div>
 </template>
@@ -36,7 +31,7 @@ import ProductTable from "./components/ProductTable.vue";
 import CreateProductModal from "./components/CreateProductModal.vue";
 import { useProducts } from "@/composables/useProducts";
 
-const { products, loading, error, fetchProducts, addProduct } = useProducts();
+const { products, error, fetchProducts, addProduct } = useProducts();
 const showCreateModal = ref(false);
 
 const handleCreateProduct = async (newProduct) => {
@@ -79,28 +74,6 @@ const handleCreateProduct = async (newProduct) => {
 
 .btn-primary:hover {
   background-color: #1565c0;
-}
-
-.productos-loading {
-  text-align: center;
-  padding: 32px;
-}
-
-.spinner {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  border: 4px solid #1976d2;
-  border-top: 4px solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 12px;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .alert-error {

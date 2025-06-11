@@ -7,11 +7,7 @@
       </button>
     </div>
 
-    <div v-if="loading" class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Cargando categorías...</p>
-    </div>
-    <div v-else-if="error" class="error-state">
+    <div v-if="error" class="error-state">
       {{ error }}
     </div>
     <div v-else>
@@ -33,19 +29,20 @@ import CategoriesTable from "./components/CategoriesTable.vue";
 import CreateCategoryModal from "./components/CreateCategoryModal.vue";
 import { useCategories } from "@/composables/useCategories";
 
-const { categories, loading, error, fetchCategories, addCategory } = useCategories();
-
+const { categories, error, fetchCategories, addCategory } = useCategories();
 const showCreateModal = ref(false);
 
 const handleCreate = async (newCategory) => {
   try {
     await addCategory(newCategory);
+    await fetchCategories();
     showCreateModal.value = false;
   } catch (error) {
     alert("Error al crear la categoría.");
   }
 };
 </script>
+
 
 <style scoped>
 .categories-container {

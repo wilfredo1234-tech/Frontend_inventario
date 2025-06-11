@@ -56,7 +56,6 @@
     />
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 import ActionButtons from '@/components/ActionButtons.vue';
@@ -64,7 +63,12 @@ import EditProductModal from './EditProductModal.vue';
 import DeleteProductModal from './DeleteProductModal.vue';
 import { useProducts } from '@/composables/useProducts';
 
-const { products, updateProduct, removeProduct } = useProducts();
+const props = defineProps({
+  products: Array,
+});
+
+
+const emit = defineEmits(['refresh']);
 
 const showEditModal = ref(false);
 const showDeleteModal = ref(false);
@@ -87,6 +91,7 @@ const handleUpdate = async (updatedProduct) => {
   try {
     await updateProduct(updatedProduct.id, updatedProduct);
     showEditModal.value = false;
+    emit('refresh'); 
   } catch (err) {
     console.error('Error al actualizar producto:', err);
   }
@@ -96,11 +101,13 @@ const handleDelete = async () => {
   try {
     await removeProduct(productToDeleteId.value);
     showDeleteModal.value = false;
+    emit('refresh'); 
   } catch (err) {
     console.error('Error al eliminar producto:', err);
   }
 };
 </script>
+
 
 <style scoped>
 .products-table-wrapper {

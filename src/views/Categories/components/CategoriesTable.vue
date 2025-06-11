@@ -64,8 +64,13 @@ import EditCategoryModal from './EditCategoryModal.vue';
 import DeleteCategoryModal from './DeleteCategoryModal.vue';
 import ActionButtons from '@/components/ActionButtons.vue';
 
-const { categories, loading, error, removeCategory, updateCategory, fetchCategories } = useCategories();
+defineProps({
+  categories: Array
+});
 
+const emit = defineEmits(['refresh']); 
+
+const { loading, error, removeCategory, updateCategory } = useCategories();
 
 const showEditModal = ref(false);
 const showDeleteModal = ref(false);
@@ -73,11 +78,11 @@ const categoryToEdit = ref(null);
 const categoryToDeleteName = ref('');
 const categoryToDeleteId = ref(null);
 
-
 const handleUpdate = async (categoryData) => {
   try {
     await updateCategory(categoryData.id, categoryData);
     showEditModal.value = false;
+    emit('refresh'); 
   } catch (err) {
     console.error('Error al actualizar categoría:', err);
   }
@@ -87,6 +92,7 @@ const handleDelete = async () => {
   try {
     await removeCategory(categoryToDeleteId.value);
     showDeleteModal.value = false;
+    emit('refresh'); 
   } catch (err) {
     console.error('Error al eliminar categoría:', err);
   }
@@ -99,11 +105,12 @@ const prepareDeleteCategory = (category) => {
 };
 
 const editCategory = (category) => {
-  console.log('Editando categoría:', category);
   categoryToEdit.value = { ...category };
   showEditModal.value = true;
 };
 </script>
+
+
 
 <style scoped>
 .add-category-btn {
