@@ -4,7 +4,7 @@ import RegisterView from '@/views/register/RegisterView.vue';
 import DashboardView from '@/views/Dashboard/DashboardView.vue';
 import DashboardHome from '@/views/Dashboard/components/DashboardHome.vue';
 import ProductsView from '@/views/Products/Products.vue';
-import CategoriesView from '@/views/Categories/Categories.vue'; // Nueva importación
+import CategoriesView from '@/views/Categories/Categories.vue';
 import { useAuthStore } from '@/stores/auth';
 
 const routes = [
@@ -32,11 +32,10 @@ const routes = [
         component: CategoriesView,
       },
       {
-  path: 'perfil',
-  name: 'perfil',
-  component: () => import('@/views/Profile/ProfileView.vue'),
-},
-
+        path: 'perfil',
+        name: 'perfil',
+        component: () => import('@/views/Profile/ProfileView.vue'),
+      },
     ],
   },
 ];
@@ -51,6 +50,10 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
     return next('/login');
+  }
+
+  if ((to.path === '/login' || to.path === '/register') && auth.isAuthenticated) {
+    return next('/dashboard');
   }
 
   next();

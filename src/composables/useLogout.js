@@ -1,21 +1,21 @@
 import { useRouter } from 'vue-router';
-import { logoutUser } from '@/api/logout';
+import { useAuthStore } from '@/stores/auth'; 
 import { useLoadingStore } from '@/stores/loadingStore';
 
 export function useLogout() {
   const router = useRouter();
   const loading = useLoadingStore();
+  const auth = useAuthStore(); 
 
   const logout = async () => {
     try {
       loading.startLoading();
-      await logoutUser();
+      await auth.logoutUser(); 
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     } finally {
-      localStorage.removeItem('token');
       loading.stopLoading(); 
-      router.push('/login');
+      router.push('/login'); 
     }
   };
 

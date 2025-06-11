@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { getUser, logout } from '@/api/auth';
+import { useRouter } from 'vue-router';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -28,10 +29,15 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     async logoutUser() {
-      await logout();
-      this.user = null;
-      this.token = null;
-      localStorage.removeItem('token');
-    },
+  try {
+    await logout();
+  } catch (err) {
+    console.error('Error al cerrar sesión en el backend:', err);
+  }
+  this.user = null;
+  this.token = null;
+  localStorage.removeItem('token');
+}
+
   },
 });
