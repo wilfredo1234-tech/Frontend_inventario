@@ -2,7 +2,7 @@
   <div class="overlay">
     <div class="register-window">
       <h2 class="title">📝 Registro</h2>
-      <form @submit.prevent="registerUser(form)" class="form">
+      <form @submit.prevent="handleSubmit" class="form">
         <input
           v-model="form.name"
           type="text"
@@ -10,6 +10,8 @@
           required
           class="input"
         />
+        <p v-if="validationErrors.name" class="error-msg">{{ validationErrors.name }}</p>
+
         <input
           v-model="form.email"
           type="email"
@@ -17,6 +19,8 @@
           required
           class="input"
         />
+        <p v-if="validationErrors.email" class="error-msg">{{ validationErrors.email }}</p>
+
         <input
           v-model="form.password"
           type="password"
@@ -24,6 +28,8 @@
           required
           class="input"
         />
+        <p v-if="validationErrors.password" class="error-msg">{{ validationErrors.password }}</p>
+
         <input
           v-model="form.password_confirmation"
           type="password"
@@ -31,6 +37,7 @@
           required
           class="input"
         />
+        <p v-if="validationErrors.password_confirmation" class="error-msg">{{ validationErrors.password_confirmation }}</p>
 
         <p class="forgot">¿Olvidaste tu contraseña? <a href="#">Click aquí</a></p>
 
@@ -45,6 +52,7 @@
 <script setup>
 import { reactive } from "vue";
 import { useRegister } from "@/composables/useRegister";
+import { useRegisterValidation } from "@/composables/useRegisterValidation";
 
 const form = reactive({
   name: "",
@@ -52,7 +60,15 @@ const form = reactive({
   password: "",
   password_confirmation: "",
 });
+
 const { registerUser, error } = useRegister();
+const { validateRegisterForm, validationErrors } = useRegisterValidation();
+
+const handleSubmit = () => {
+  if (validateRegisterForm(form)) {
+    registerUser(form);
+  }
+};
 </script>
 
 <style scoped>

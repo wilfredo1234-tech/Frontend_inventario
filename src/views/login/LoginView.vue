@@ -2,24 +2,31 @@
   <div class="overlay">
     <div class="login-window">
       <h2 class="title"> Iniciar Sesión</h2>
-      <form @submit.prevent="loginUser(form)" class="form">
-        <input
-          v-model="form.email"
-          type="email"
-          placeholder=" Correo electrónico"
-          required
-          class="input"
-        />
-        <input
-          v-model="form.password"
-          type="password"
-          placeholder=" Contraseña"
-          required
-          class="input"
-        />
-        <button type="submit" class="btn">Entrar</button>
-        <p v-if="error" class="error-msg">{{ error }}</p>
-      </form>
+     <form @submit.prevent="handleSubmit" class="form">
+  <input
+    v-model="form.email"
+    type="email"
+    placeholder="Correo electrónico"
+    class="input"
+  />
+  <span v-if="validationErrors.email" class="error-msg">
+    {{ validationErrors.email }}
+  </span>
+
+  <input
+    v-model="form.password"
+    type="password"
+    placeholder="Contraseña"
+    class="input"
+  />
+  <span v-if="validationErrors.password" class="error-msg">
+    {{ validationErrors.password }}
+  </span>
+
+  <button type="submit" class="btn">Entrar</button>
+  <p v-if="error" class="error-msg">{{ error }}</p>
+</form>
+
       <p class="register-link">
         ¿No tienes cuenta? 
         <a href="/register">Regístrate aquí</a>
@@ -29,12 +36,21 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import { useLogin } from "@/composables/useLogin";
+import { reactive } from 'vue';
+import { useLogin } from '@/composables/useLogin';
+import { useLoginValidation } from '@/composables/useLoginValidation';
 
-const form = reactive({ email: "", password: "" });
+const form = reactive({ email: '', password: '' });
 const { loginUser, error } = useLogin();
+const { validateForm, validationErrors } = useLoginValidation();
+
+const handleSubmit = () => {
+  const isValid = validateForm(form);
+  if (!isValid) return;
+  loginUser(form);
+};
 </script>
+
 
 <style scoped>
 

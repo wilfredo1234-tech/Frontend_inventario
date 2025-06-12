@@ -13,7 +13,8 @@
     "lucide-vue-next": "^0.513.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "zod": "^3.25.62"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.8",
