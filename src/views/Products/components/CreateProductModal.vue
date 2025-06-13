@@ -9,7 +9,7 @@
           <select 
             id="category" 
             v-model.number="formData.category_id" 
-            @focus="loadCategories"
+            @focus="fetchCategories"
             required
           >
             <option disabled value="">Seleccione una categoría</option>
@@ -98,17 +98,16 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
-import { useAuthStore } from '@/stores/auth';
+import { useCategories } from '@/composables/useCategories';
 
 const props = defineProps({
   show: Boolean
 });
 
 const emit = defineEmits(['create', 'close']);
-const auth = useAuthStore();
 
-const categories = ref([]);
+const { categories, fetchCategories } = useCategories();
+
 const formData = ref({
   category_id: null,
   name: '',
@@ -118,21 +117,6 @@ const formData = ref({
   stock: 0,
   status: true
 });
-
-const loadCategories = async () => {
-  if (categories.value.length > 0) return;
-
-  try {
-    const response = await axios.get('/api/categories', {
-      headers: {
-        Authorization: `Bearer ${auth.token}`
-      }
-    });
-    categories.value = response.data;
-  } catch (error) {
-    console.error('Error al cargar categorías:', error);
-  }
-};
 
 const handleSubmit = () => {
   emit('create', { ...formData.value });
