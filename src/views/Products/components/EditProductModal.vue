@@ -1,4 +1,3 @@
-<!-- EditProductModal.vue -->
 <template>
   <div v-if="show" class="modal-overlay" @click.self="closeModal">
     <div class="modal-content">
@@ -31,10 +30,26 @@
           <label for="stock">Stock*</label>
           <input id="stock" v-model.number="formData.stock" type="number" min="0" required class="form-input">
         </div>
+<div class="form-group">
+  <label for="category_id">Categoría*</label>
+  <select 
+    id="category_id" 
+    v-model.number="formData.category_id" 
+    required 
+    class="form-input"
+    @focus="fetchCategories"
+  >
+    <option disabled value="">Seleccione una categoría</option>
+    <option 
+      v-for="category in categories" 
+      :key="category.id" 
+      :value="category.id"
+    >
+      {{ category.name }}
+    </option>
+  </select>
 
-        <div class="form-group">
-          <label for="category_id">Categoría*</label>
-          <input id="category_id" v-model.number="formData.category_id" type="number" required class="form-input">
+
          
         </div>
 
@@ -59,6 +74,9 @@
 
 <script setup>
 import { ref, watch } from 'vue';
+import { useCategories } from '@/composables/useCategories';
+
+const { categories, fetchCategories } = useCategories();
 
 const props = defineProps({
   show: Boolean,
