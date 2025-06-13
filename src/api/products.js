@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/api/products";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_URL = `${API_BASE_URL}/api/products`;
 
 export const getAllProducts = async (token) => {
   const response = await axios.get(API_URL, {

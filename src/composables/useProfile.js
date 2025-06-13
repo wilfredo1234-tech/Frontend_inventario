@@ -1,4 +1,4 @@
-// src/composables/useProfile.js
+
 import { computed, onMounted, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { getUser } from '@/api/auth';

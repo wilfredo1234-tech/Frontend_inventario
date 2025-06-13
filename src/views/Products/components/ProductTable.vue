@@ -63,6 +63,8 @@ import EditProductModal from './EditProductModal.vue';
 import DeleteProductModal from './DeleteProductModal.vue';
 import { useProducts } from '@/composables/useProducts';
 
+const { removeProduct,updateProduct } = useProducts();
+
 const props = defineProps({
   products: Array,
 });
