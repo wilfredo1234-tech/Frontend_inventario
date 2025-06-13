@@ -101,6 +101,7 @@ const handleSubmit = () => {
   color: #2c3e50;
   margin-bottom: 2rem;
   text-align: center;
+  word-break: break-word;
 }
 
 .form {
@@ -172,15 +173,31 @@ const handleSubmit = () => {
   padding: 2rem;
 }
 
+/* Responsive: móviles */
 @media (max-width: 768px) {
   .login-card {
     flex-direction: column;
     min-height: auto;
+    max-height: 95vh;
+    overflow-y: auto;
   }
 
   .left,
   .right {
     padding: 2rem;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .input {
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    font-size: 1rem;
+    padding: 12px;
   }
 }
 </style>
