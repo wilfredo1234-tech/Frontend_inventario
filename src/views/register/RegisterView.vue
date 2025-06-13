@@ -30,6 +30,24 @@
         />
         <p v-if="validationErrors.password" class="error-msg">{{ validationErrors.password }}</p>
 
+        <div v-if="form.password" class="password-rules-list">
+          <p :class="{'valid': rules.minLength, 'invalid': !rules.minLength}">
+            {{ rules.minLength ? '✅' : '❌' }} Mínimo 6 caracteres
+          </p>
+          <p :class="{'valid': rules.uppercase, 'invalid': !rules.uppercase}">
+            {{ rules.uppercase ? '✅' : '❌' }} Al menos una mayúscula
+          </p>
+          <p :class="{'valid': rules.lowercase, 'invalid': !rules.lowercase}">
+            {{ rules.lowercase ? '✅' : '❌' }} Al menos una minúscula
+          </p>
+          <p :class="{'valid': rules.number, 'invalid': !rules.number}">
+            {{ rules.number ? '✅' : '❌' }} Al menos un número
+          </p>
+          <p :class="{'valid': rules.specialChar, 'invalid': !rules.specialChar}">
+            {{ rules.specialChar ? '✅' : '❌' }} Al menos un carácter especial
+          </p>
+        </div>
+
         <input
           v-model="form.password_confirmation"
           type="password"
@@ -50,7 +68,7 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import { useRegister } from "@/composables/useRegister";
 import { useRegisterValidation } from "@/composables/useRegisterValidation";
 
@@ -69,10 +87,18 @@ const handleSubmit = () => {
     registerUser(form);
   }
 };
+
+// Validación en tiempo real
+const rules = computed(() => ({
+  minLength: form.password.length >= 6,
+  uppercase: /[A-Z]/.test(form.password),
+  lowercase: /[a-z]/.test(form.password),
+  number: /\d/.test(form.password),
+  specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(form.password),
+}));
 </script>
 
 <style scoped>
-
 .overlay {
   position: fixed;
   top: 0;
@@ -87,7 +113,6 @@ const handleSubmit = () => {
   z-index: 9999;
 }
 
-/* Estilo unificado con login */
 .register-window {
   background: white;
   border-radius: 12px;
@@ -166,5 +191,21 @@ const handleSubmit = () => {
   font-weight: 600;
   margin-top: 0.5rem;
   font-size: 0.9rem;
+}
+
+.password-rules-list {
+  font-size: 0.85rem;
+  margin-top: -0.3rem;
+  margin-bottom: 0.5rem;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.valid {
+  color: #27ae60; /* verde */
+}
+
+.invalid {
+  color: #95a5a6; /* gris */
 }
 </style>
